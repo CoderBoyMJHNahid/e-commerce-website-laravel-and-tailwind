@@ -22,7 +22,9 @@ class UpdateProductRequest extends FormRequest
     public function rules(): array
     {
         return [
-            "price" => "required|numeric"
+            "price" => "required|numeric",
+            "p_image" => ['image', 'mimetypes:image/jpeg,image/png', 'max:1024', 'nullable'], // Specify mime types directly
+            "old_image" => "required|string",
         ];
     }
 }

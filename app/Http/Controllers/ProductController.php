@@ -51,7 +51,7 @@ class ProductController extends Controller
 
         return $this->index();
     }
-    
+
     public function getProductmobilesentrix(MobileSentrixAPIService $MobileSentrixAPIService)
     {
 
@@ -90,7 +90,7 @@ class ProductController extends Controller
     public function index()
     {
         $products = Product::all();
-        return view("dashboard.products.index",["products"=>$products]);
+        return view("dashboard.products.index", ["products" => $products]);
     }
 
     /**
@@ -123,7 +123,7 @@ class ProductController extends Controller
     public function edit(string $id)
     {
         $data = Product::find($id);
-        return view("dashboard.products.update",["data"=>$data]);
+        return view("dashboard.products.update", ["data" => $data]);
     }
 
     /**
@@ -131,14 +131,25 @@ class ProductController extends Controller
      */
     public function update(UpdateProductRequest $request, string $id)
     {
+        
+        if ($request->hasFile('p_image') && $request->file('p_image')->isValid()) {
+            $p_image = $request->file('p_image');
+            $p_imageName = time() . '.' . $p_image->getClientOriginalExtension();
+            $p_imagePath = public_path('products/');
+            $p_image->move($p_imagePath, $p_imageName);
 
-        $user = Product::where("id", $id)
-                                ->update([
-                                    "price" => $request->price
-                                ]);
+            $p_imageUrl = url('/products/' . $p_imageName);
+        } else {
+            $p_imageUrl = $request->old_image;
+        }
 
-        return redirect()->route("products.index")->with("status","The product has been updated");
+        
+        $product = Product::findOrFail($id);
+        $product->price = $request->price;
+        $product->image = $p_imageUrl;
+        $product->save();
 
+        return redirect()->route("products.index")->with("status", "The product has been updated");
     }
 
     /**
@@ -148,6 +159,6 @@ class ProductController extends Controller
     {
         $product = Product::find($id);
         $product->delete();
-        return redirect()->route("products.index")->with("status","The product has been deleted");
+        return redirect()->route("products.index")->with("status", "The product has been deleted");
     }
 }

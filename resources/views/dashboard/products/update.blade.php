@@ -20,7 +20,7 @@
                 </div><!-- end card header -->
                 <div class="card-body d-flex justify-content-center">
                     <div class="col-5">
-                        <form action="{{ route("products.update",$data->id) }}" class="row" method="POST">
+                        <form enctype="multipart/form-data" action="{{ route("products.update",$data->id) }}" class="row" method="POST">
                             @csrf
                             @method("PUT")
                             <div class="col-12">
@@ -28,6 +28,20 @@
                                     <label for="name">Price</label>
                                     <input type="text" class="form-control" name="price" value="{{ $data->price }}">
                                     @error("price")
+                                        <div class="alert alert-danger mt-2 mb-0">
+                                            <p class="m-0">{{ $message }}</p>
+                                        </div>
+                                    @enderror
+                                </div>
+                            </div>
+                            <div class="col-12">
+                                <div class="form-group">
+                                    <label for="name" class="mt-4">Old Image</label> <br>
+                                    <img src="{{ $data->image }}" width="100px" class="mb-4" alt="product image"> <br>
+                                    <label for="name">Image</label>
+                                    <input type="file" class="form-control" name="p_image" accept="image/jpeg, image/png">
+                                    <input type="hidden" name="old_image" value="{{ $data->image }}"/>
+                                    @error("p_image")
                                         <div class="alert alert-danger mt-2 mb-0">
                                             <p class="m-0">{{ $message }}</p>
                                         </div>
